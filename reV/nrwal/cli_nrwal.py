@@ -19,7 +19,7 @@ import time
 
 from reV.config.nrwal_config import RevNrwalConfig
 from reV.pipeline.status import Status
-from reV.nrwal.nrwal import RevNrwal
+from reV.nrwal.nrwal import RevNrwal, RevNrwalCSV
 from reV.utilities.cli_dtypes import SAMFILES
 from reV import __version__
 
@@ -110,6 +110,7 @@ def from_config(ctx, config_file, verbose):
                            sam_files=config.sam_files,
                            nrwal_configs=config.nrwal_configs,
                            output_request=config.output_request,
+                           csv_output=config.csv_output,
                            save_raw=config.save_raw,
                            meta_gid_col=config.meta_gid_col,
                            site_meta_cols=config.site_meta_cols,
@@ -123,6 +124,7 @@ def from_config(ctx, config_file, verbose):
             ctx.obj['SAM_FILES'] = config.sam_files
             ctx.obj['NRWAL_CONFIGS'] = config.nrwal_configs
             ctx.obj['OUTPUT_REQUEST'] = config.output_request
+            ctx.obj['CSV_OUTPUT'] = config.csv_output
             ctx.obj['SAVE_RAW'] = config.save_raw
             ctx.obj['META_GID_COL'] = config.meta_gid_col
             ctx.obj['SITE_META_COLS'] = config.site_meta_cols
@@ -169,6 +171,13 @@ def from_config(ctx, config_file, verbose):
               'you should set save_raw=True and then in the NRWAL equations '
               'use cf_mean_raw as the input and then define cf_mean as the '
               'manipulated data that will be included in the output_request.')
+@click.option('--csv_output', '-csv', is_flag=True,
+              help='Flag to indicate that the output file should be a CSV '
+              'with the meta info and any output requests that can be '
+              'combined with the meta object (i.e. output is 1D array and '
+              'len(output) == num_rows in meta). The csv file will be written'
+              'to the current directory ("./") and will be named using the '
+              'job name.')
 @click.option('--save_raw', '-sr', default=True, type=bool,
               help='Flag to save a copy of existing datasets in gen_fpath '
               'that are part of the output_request. For example, if you '
@@ -190,7 +199,7 @@ def from_config(ctx, config_file, verbose):
               help='Flag to turn on debug logging. Default is not verbose.')
 @click.pass_context
 def direct(ctx, gen_fpath, site_data, sam_files, nrwal_configs,
-           output_request, save_raw, meta_gid_col,
+           output_request, csv_output, save_raw, meta_gid_col,
            site_meta_cols, log_dir, verbose):
     """Main entry point to run reV-NRWAL analysis"""
     name = ctx.obj['NAME']
@@ -199,6 +208,7 @@ def direct(ctx, gen_fpath, site_data, sam_files, nrwal_configs,
     ctx.obj['SAM_FILES'] = sam_files
     ctx.obj['NRWAL_CONFIGS'] = nrwal_configs
     ctx.obj['OUTPUT_REQUEST'] = output_request
+    ctx.obj['CSV_OUTPUT'] = csv_output
     ctx.obj['SAVE_RAW'] = save_raw
     ctx.obj['META_GID_COL'] = meta_gid_col
     ctx.obj['SITE_META_COLS'] = site_meta_cols
@@ -210,12 +220,20 @@ def direct(ctx, gen_fpath, site_data, sam_files, nrwal_configs,
         init_mult(name, log_dir, modules=[__name__, 'reV', 'rex'],
                   verbose=verbose, node=True)
 
+        args = (gen_fpath, site_data, sam_files,
+                nrwal_configs, output_request)
+        kwargs = {'meta_gid_col': meta_gid_col,
+                  'site_meta_cols': site_meta_cols}
+
+        if csv_output:
+            nrwal_class = RevNrwalCSV
+            kwargs['fout'] = os.path.join("./", '{}.csv'.format(name))
+        else:
+            nrwal_class = RevNrwal
+            kwargs['save_raw'] = save_raw
+
         try:
-            RevNrwal.run(gen_fpath, site_data, sam_files, nrwal_configs,
-                         output_request,
-                         save_raw=save_raw,
-                         meta_gid_col=meta_gid_col,
-                         site_meta_cols=site_meta_cols)
+            nrwal_class.run(*args, **kwargs)
         except Exception as e:
             logger.exception('reV-NRWAL module failed, received the '
                              'following exception:\n{}'.format(e))
@@ -232,8 +250,8 @@ def direct(ctx, gen_fpath, site_data, sam_files, nrwal_configs,
 
 
 def get_node_cmd(name, gen_fpath, site_data, sam_files, nrwal_configs,
-                 output_request, save_raw, meta_gid_col, site_meta_cols,
-                 log_dir, verbose):
+                 output_request, csv_output, save_raw, meta_gid_col,
+                 site_meta_cols, log_dir, verbose):
     """Get a CLI call command for the reV-NRWAL cli."""
 
     args = ['-gf {}'.format(SLURM.s(gen_fpath)),
@@ -246,6 +264,9 @@ def get_node_cmd(name, gen_fpath, site_data, sam_files, nrwal_configs,
             '-mc {}'.format(SLURM.s(site_meta_cols)),
             '-ld {}'.format(SLURM.s(log_dir)),
             ]
+
+    if csv_output:
+        args.append('-csv')
 
     if verbose:
         args.append('-v')
@@ -287,6 +308,7 @@ def slurm(ctx, alloc, feature, memory, walltime, module, conda_env,
     sam_files = ctx.obj['SAM_FILES']
     nrwal_configs = ctx.obj['NRWAL_CONFIGS']
     output_request = ctx.obj['OUTPUT_REQUEST']
+    csv_output = ctx.obj['CSV_OUTPUT']
     save_raw = ctx.obj['SAVE_RAW']
     meta_gid_col = ctx.obj['META_GID_COL']
     site_meta_cols = ctx.obj['SITE_META_COLS']
@@ -298,8 +320,8 @@ def slurm(ctx, alloc, feature, memory, walltime, module, conda_env,
         stdout_path = os.path.join(log_dir, 'stdout/')
 
     cmd = get_node_cmd(name, gen_fpath, site_data, sam_files, nrwal_configs,
-                       output_request, save_raw, meta_gid_col, site_meta_cols,
-                       log_dir, verbose)
+                       output_request, csv_output, save_raw, meta_gid_col,
+                       site_meta_cols, log_dir, verbose)
     if sh_script:
         cmd = sh_script + '\n' + cmd
 

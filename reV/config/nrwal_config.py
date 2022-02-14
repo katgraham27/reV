@@ -90,6 +90,12 @@ class RevNrwalConfig(AnalysisConfig):
         return self['output_request']
 
     @property
+    def csv_output(self):
+        """Get the flag to save output data as csv. Optional, default is
+        False."""
+        return bool(self.get('csv_output', False))
+
+    @property
     def save_raw(self):
         """Get the flag to save raw datasets in gen_fpath in the case that they
         are manipulated then requested in output_request. Optional, default is
