@@ -15,11 +15,61 @@ import pytest
 import tempfile
 
 from reV.handlers.outputs import Outputs
-from reV.nrwal.nrwal import RevNrwal
+from reV.nrwal.nrwal import RevNrwal, RevNrwalCSV
 from reV import TESTDATADIR
 
 
 SOURCE_DIR = os.path.join(TESTDATADIR, 'nrwal/')
+
+
+def test_nrwal_csv():
+    """Test the reV nrwal csv output class. """
+    with tempfile.TemporaryDirectory() as td:
+        for fn in os.listdir(SOURCE_DIR):
+            shutil.copy(os.path.join(SOURCE_DIR, fn), os.path.join(td, fn))
+
+        gen_fpath = os.path.join(td, 'gen_2010_node00.h5')
+        site_data = os.path.join(td, 'example_offshore_data.csv')
+        offshore_config = os.path.join(td, 'offshore.json')
+        onshore_config = os.path.join(td, 'onshore.json')
+        sam_configs = {'onshore': onshore_config,
+                       'offshore': offshore_config}
+        nrwal_configs = {'offshore': os.path.join(td, 'nrwal_offshore.yaml')}
+        out_fn = 'nrwal_meta.csv'
+        out_fpath = os.path.join(td, out_fn)
+
+        with Outputs(gen_fpath, 'a') as f:
+            f.time_index = pd.date_range('20100101', '20110101',
+                                         closed='right', freq='1h')
+            f._add_dset('cf_profile', np.random.random(f.shape),
+                        np.uint32, attrs={'scale_factor': 1000},
+                        chunks=(None, 10))
+            f._add_dset('fixed_charge_rate',
+                        0.09 * np.ones(f.shape[1], dtype=np.float32),
+                        np.float32, attrs={'scale_factor': 1},
+                        chunks=None)
+
+        compatible = ['fixed_charge_rate', 'depth', 'total_losses',
+                      'array', 'export', 'gcf_adjustment',
+                      'lcoe_fcr', 'cf_mean']
+        incompatible = ['cf_profile']
+        output_request = compatible + incompatible
+
+        with pytest.warns(Warning) as record:
+            RevNrwalCSV.run(gen_fpath, site_data, sam_configs, nrwal_configs,
+                            output_request, fout=out_fpath,
+                            site_meta_cols=['depth'])
+
+        warn_msg = record[0].message.args[0]
+        assert "Skipping output 'cf_profile'" in warn_msg
+
+        assert out_fn in os.listdir(td)
+
+        new_data = pd.read_csv(out_fpath)
+        for col in compatible:
+            assert col in new_data
+        for col in incompatible:
+            assert col not in new_data
 
 
 def test_nrwal():
@@ -149,9 +199,10 @@ def execute_pytest(capture='all', flags='-rapP'):
         Which tests to show logs and results for.
     """
 
-    fname = os.path.basename(__file__)
+    fname = __file__
     pytest.main(['-q', '--show-capture={}'.format(capture), fname, flags])
 
 
 if __name__ == '__main__':
-    execute_pytest()
+    # execute_pytest()
+    test_nrwal_csv()
