@@ -751,3 +751,111 @@ class RevNrwal:
         logger.info('NRWAL module complete!')
 
         return obj
+
+
+class RevNrwalCSV(RevNrwal):
+    """Framework to handle reV-NRWAL analysis with csv output."""
+
+    def write_meta_to_csv(self, fout):
+        """Combine NRWAL outputs with meta and write to output csv.
+
+        Parameters
+        ----------
+        fout : str
+            Filepath to output csv file. Meta data will be written to
+            this file, including any requested outputs that can be
+            combined with the meta (i.e. output is 1D array and
+            len(output) == num_rows in meta).
+        """
+
+        if not fout.endswith('.csv'):
+            fout = "".join([fout, '.csv'])
+
+        logger.info('Writing NRWAL outputs to: {}'.format(fout))
+        meta_out = self.meta_out[self.analysis_mask].copy()
+
+        for dset, arr in self._out.items():
+            if len(arr.shape) != 1 or arr.shape[0] != meta_out.shape[0]:
+                msg = ('Skipping output {!r}: shape {} cannot be comdined '
+                       'with meta of shape {}!'
+                       .format(dset, arr.shape, meta_out.shape))
+                logger.warning(msg)
+                warn(msg)
+                continue
+            meta_out[dset] = arr
+
+        meta_out.to_csv(fout, index=False)
+        logger.info('Finished writing NRWAL outputs to: {}'.format(fout))
+
+    @classmethod
+    def run(cls, gen_fpath, site_data, sam_files, nrwal_configs,
+            output_request, fout, meta_gid_col='gid',
+            site_meta_cols=None):
+        """Initialize and run the NRWAL analysis object.
+
+        Parameters
+        ----------
+        gen_fpath : str
+            Full filepath to reV generation or rep_profiles h5 output file.
+            Anything in the output_request is added and/or manipulated in this
+            file.
+        site_data : str | pd.DataFrame
+            Site-specific input data for NRWAL calculation. String should be a
+            filepath that points to a csv, DataFrame is pre-extracted data.
+            Rows match sites, columns are input keys. Need a "gid" column that
+            corresponds to the "meta_gid_col" in the gen_fpath meta data and a
+            "config" column that corresponds to the nrwal_configs input. Only
+            sites with a gid in this file's "gid" column will be run through
+            NRWAL.
+        sam_files : dict
+            Dictionary lookup of config_id (keys) mapped to config filepaths
+            (values). The same config_id values will be used from the
+            nrwal_configs lookup input.
+        nrwal_configs : dict
+            Dictionary lookup of config_id (keys) mapped to config filepaths
+            (values). The same config_id values will be used from the
+            sam_files lookup in project_points
+        output_request : list | tuple
+            List of output dataset names you want written to the gen_fpath
+            file. Any key from the NRWAL configs or any of the inputs
+            (site_data or sam_files) is available to be exported as an output
+            dataset. If you want to manipulate a dset like cf_mean from
+            gen_fpath and include it in the output_request, you should set
+            save_raw=True and then in the NRWAL equations use cf_mean_raw as
+            the input and then define cf_mean as the manipulated data that will
+            be included in the output_request.
+        fout : str
+            Filepath to output csv file. Meta data will be written to
+            this file, including any requested outputs that can be
+            combined with the meta (i.e. output is 1D array and
+            len(output) == num_rows in meta).
+        meta_gid_col : str
+            Column label in the source meta data from gen_fpath that contains
+            the unique gid identifier. This will be joined to the site_data
+            "gid" column
+        site_meta_cols : list | tuple | None
+            Column labels from site_data to be added to the meta data table in
+            gen_fpath. None (default) will use class variable
+            DEFAULT_META_COLS, and any additional cols requested here will be
+            added to DEFAULT_META_COLS.
+
+        Returns
+        -------
+        obj : RevNrwal
+            Instantiated and run RevNrwal analysis object.
+        """
+
+        obj = cls(gen_fpath, site_data, sam_files, nrwal_configs,
+                  output_request,
+                  save_raw=True,
+                  meta_gid_col=meta_gid_col,
+                  site_meta_cols=site_meta_cols)
+
+        if any(obj.analysis_gids):
+            obj.run_nrwal()
+            obj.check_outputs()
+            obj.write_meta_to_csv(fout)
+
+        logger.info('NRWAL module complete!')
+
+        return obj
