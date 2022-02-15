@@ -114,6 +114,7 @@ def from_config(ctx, config_file, verbose):
                            save_raw=config.save_raw,
                            meta_gid_col=config.meta_gid_col,
                            site_meta_cols=config.site_meta_cols,
+                           out_dir=config.dirout,
                            logdir=config.logdir,
                            verbose=verbose)
 
@@ -193,6 +194,8 @@ def from_config(ctx, config_file, verbose):
               'output meta data. None (default) will use class variable '
               'DEFAULT_META_COLS, and any additional cols requested here will '
               'be added to DEFAULT_META_COLS.')
+@click.option('--out_dir', '-od', type=STR, default='./',
+              show_default=True, help='Directory to save output csv.')
 @click.option('--log_dir', '-ld', type=STR, default='./logs/',
               help='Directory to save reV-NRWAL logs.')
 @click.option('-v', '--verbose', is_flag=True,
@@ -200,7 +203,7 @@ def from_config(ctx, config_file, verbose):
 @click.pass_context
 def direct(ctx, gen_fpath, site_data, sam_files, nrwal_configs,
            output_request, csv_output, save_raw, meta_gid_col,
-           site_meta_cols, log_dir, verbose):
+           site_meta_cols, out_dir, log_dir, verbose):
     """Main entry point to run reV-NRWAL analysis"""
     name = ctx.obj['NAME']
     ctx.obj['GEN_FPATH'] = gen_fpath
@@ -212,6 +215,7 @@ def direct(ctx, gen_fpath, site_data, sam_files, nrwal_configs,
     ctx.obj['SAVE_RAW'] = save_raw
     ctx.obj['META_GID_COL'] = meta_gid_col
     ctx.obj['SITE_META_COLS'] = site_meta_cols
+    ctx.obj['OUT_DIR'] = out_dir
     ctx.obj['LOG_DIR'] = log_dir
     ctx.obj['VERBOSE'] = verbose
 
@@ -227,7 +231,7 @@ def direct(ctx, gen_fpath, site_data, sam_files, nrwal_configs,
 
         if csv_output:
             nrwal_class = RevNrwalCSV
-            kwargs['fout'] = os.path.join("./", '{}.csv'.format(name))
+            kwargs['fout'] = os.path.join(out_dir, '{}.csv'.format(name))
         else:
             nrwal_class = RevNrwal
             kwargs['save_raw'] = save_raw
@@ -251,7 +255,7 @@ def direct(ctx, gen_fpath, site_data, sam_files, nrwal_configs,
 
 def get_node_cmd(name, gen_fpath, site_data, sam_files, nrwal_configs,
                  output_request, csv_output, save_raw, meta_gid_col,
-                 site_meta_cols, log_dir, verbose):
+                 site_meta_cols, out_dir, log_dir, verbose):
     """Get a CLI call command for the reV-NRWAL cli."""
 
     args = ['-gf {}'.format(SLURM.s(gen_fpath)),
@@ -262,6 +266,7 @@ def get_node_cmd(name, gen_fpath, site_data, sam_files, nrwal_configs,
             '-sr {}'.format(SLURM.s(save_raw)),
             '-mg {}'.format(SLURM.s(meta_gid_col)),
             '-mc {}'.format(SLURM.s(site_meta_cols)),
+            '-od {}'.format(SLURM.s(out_dir)),
             '-ld {}'.format(SLURM.s(log_dir)),
             ]
 
@@ -321,7 +326,7 @@ def slurm(ctx, alloc, feature, memory, walltime, module, conda_env,
 
     cmd = get_node_cmd(name, gen_fpath, site_data, sam_files, nrwal_configs,
                        output_request, csv_output, save_raw, meta_gid_col,
-                       site_meta_cols, log_dir, verbose)
+                       site_meta_cols, out_dir, log_dir, verbose)
     if sh_script:
         cmd = sh_script + '\n' + cmd
 
