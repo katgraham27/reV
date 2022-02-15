@@ -785,25 +785,51 @@ class RevNrwalCSV(RevNrwal):
             meta_out[dset] = arr
 
         meta_out.to_csv(fout, index=False)
+        self._cleanup_input_gen_file()
         logger.info('Finished writing NRWAL outputs to: {}'.format(fout))
+
+    def _cleanup_input_gen_file(self):
+        """Remove the '_raw' outputs from the input file."""
+        with Outputs(self._gen_fpath, 'a') as f:
+            for dset in f.dsets:
+                if dset.endswith('_raw'):
+                    del f.h5[dset]
 
     def save_raw_dsets(self):
         """If requested by save_raw=True, archive raw datasets that exist in
         the meta DataFrame and are also requested in the output_request."""
 
+        super().save_raw_dsets()
         if not self._save_raw:
             return
 
-        for dset in self._output_request:
-            dset_raw = '{}_raw'.format(dset)
-            if dset in self.meta_out and dset_raw not in self.meta_out:
-                logger.info('Saving raw data from "{}" to "{}"'
-                            .format(dset, dset_raw))
-                self.meta_out[dset_raw] = self.meta_out[dset]
+        with Outputs(self._gen_fpath, 'r') as f:
+            for dset in self._output_request:
+                dset_raw = '{}_raw'.format(dset)
+                if dset_raw not in self._meta_source:
+                    self._save_dset_to_meta(f, dset, dset_raw)
+
+    def _save_dset_to_meta(self, f, dset, dset_raw):
+        """Save the raw dset to the meta if it can be found."""
+
+        if dset in self._meta_source:
+            logger.info('Saving raw data from "{}" to "{}"'
+                        .format(dset, dset_raw))
+            self._meta_source[dset_raw] = self._meta_source[dset]
+        elif dset in f:
+            arr = f[dset]
+            if len(arr.shape) != 1 or len(arr) != len(self._meta_source):
+                msg = ('Skipping raw output request {!r}: shape {} cannot '
+                       'be comdined with meta of shape {}!'
+                       .format(dset, arr.shape, self._meta_source.shape))
+                logger.warning(msg)
+                warn(msg)
+            else:
+                self._meta_source[dset_raw] = arr
 
     @classmethod
     def run(cls, gen_fpath, site_data, sam_files, nrwal_configs,
-            output_request, fout, meta_gid_col='gid',
+            output_request, fout, save_raw=True, meta_gid_col='gid',
             site_meta_cols=None):
         """Initialize and run the NRWAL analysis object.
 
@@ -843,6 +869,12 @@ class RevNrwalCSV(RevNrwal):
             this file, including any requested outputs that can be
             combined with the meta (i.e. output is 1D array and
             len(output) == num_rows in meta).
+        save_raw : bool
+            Flag to save a copy of existing datasets that are part
+            of the output_request. For example, if you request cf_mean in
+            output_request and manipulate the cf_mean dataset in the NRWAL
+            equations, the original cf_mean will be archived under the
+            "cf_mean_raw" dataset in the output csv.
         meta_gid_col : str
             Column label in the source meta data from gen_fpath that contains
             the unique gid identifier. This will be joined to the site_data
@@ -861,7 +893,7 @@ class RevNrwalCSV(RevNrwal):
 
         obj = cls(gen_fpath, site_data, sam_files, nrwal_configs,
                   output_request,
-                  save_raw=True,
+                  save_raw=save_raw,
                   meta_gid_col=meta_gid_col,
                   site_meta_cols=site_meta_cols)
 

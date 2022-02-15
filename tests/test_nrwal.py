@@ -49,19 +49,26 @@ def test_nrwal_csv():
                         np.float32, attrs={'scale_factor': 1},
                         chunks=None)
 
-        compatible = ['fixed_charge_rate', 'depth', 'total_losses',
-                      'array', 'export', 'gcf_adjustment',
-                      'lcoe_fcr', 'cf_mean']
+        compatible = ['depth', 'total_losses', 'array', 'export',
+                      'gcf_adjustment']
+        compatible_raw = ['fixed_charge_rate', 'lcoe_fcr', 'cf_mean']
         incompatible = ['cf_profile']
-        output_request = compatible + incompatible
+        output_request = compatible + compatible_raw + incompatible
+
+        with Outputs(gen_fpath, 'r') as f:
+            original_dsets = {dset: f[dset] for dset in compatible_raw}
+            mask = f.meta.offshore == 1
 
         with pytest.warns(Warning) as record:
             RevNrwalCSV.run(gen_fpath, site_data, sam_configs, nrwal_configs,
                             output_request, fout=out_fpath,
                             site_meta_cols=['depth'])
 
-        warn_msg = record[0].message.args[0]
-        assert "Skipping output 'cf_profile'" in warn_msg
+        expected_message_out = ["Skipping raw output request 'cf_profile'",
+                                "Skipping output 'cf_profile'"]
+        for r, m in zip(record, expected_message_out):
+            warn_msg = r.message.args[0]
+            assert m in warn_msg
 
         assert out_fn in os.listdir(td)
 
@@ -70,6 +77,15 @@ def test_nrwal_csv():
             assert col in new_data
         for col in incompatible:
             assert col not in new_data
+
+        for dset_name, dset in original_dsets.items():
+            raw_name = '{}_raw'.format(dset_name)
+            assert raw_name in new_data
+            assert np.allclose(dset[mask], new_data[raw_name])
+
+        with Outputs(gen_fpath, 'r') as f:
+            for dset in f.dsets:
+                assert not dset.endswith('_raw')
 
 
 def test_nrwal():

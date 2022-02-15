@@ -227,14 +227,14 @@ def direct(ctx, gen_fpath, site_data, sam_files, nrwal_configs,
         args = (gen_fpath, site_data, sam_files,
                 nrwal_configs, output_request)
         kwargs = {'meta_gid_col': meta_gid_col,
-                  'site_meta_cols': site_meta_cols}
+                  'site_meta_cols': site_meta_cols,
+                  'save_raw': save_raw}
 
         if csv_output:
             nrwal_class = RevNrwalCSV
             kwargs['fout'] = os.path.join(out_dir, '{}.csv'.format(name))
         else:
             nrwal_class = RevNrwal
-            kwargs['save_raw'] = save_raw
 
         try:
             nrwal_class.run(*args, **kwargs)
