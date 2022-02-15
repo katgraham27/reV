@@ -787,6 +787,20 @@ class RevNrwalCSV(RevNrwal):
         meta_out.to_csv(fout, index=False)
         logger.info('Finished writing NRWAL outputs to: {}'.format(fout))
 
+    def save_raw_dsets(self):
+        """If requested by save_raw=True, archive raw datasets that exist in
+        the meta DataFrame and are also requested in the output_request."""
+
+        if not self._save_raw:
+            return
+
+        for dset in self._output_request:
+            dset_raw = '{}_raw'.format(dset)
+            if dset in self.meta_out and dset_raw not in self.meta_out:
+                logger.info('Saving raw data from "{}" to "{}"'
+                            .format(dset, dset_raw))
+                self.meta_out[dset_raw] = self.meta_out[dset]
+
     @classmethod
     def run(cls, gen_fpath, site_data, sam_files, nrwal_configs,
             output_request, fout, meta_gid_col='gid',
