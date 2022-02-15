@@ -204,5 +204,4 @@ def execute_pytest(capture='all', flags='-rapP'):
 
 
 if __name__ == '__main__':
-    # execute_pytest()
-    test_nrwal_csv()
+    execute_pytest()
