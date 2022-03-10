@@ -3,14 +3,11 @@
     2007,
     2008
   ],
-  "directories": {
-    "log_directory": "./logs/",
-    "output_directory": "./"
-  },
+  "log_directory": "./logs/",
   "execution_control": {
-    "nodes": 8,
+    "nodes": 16,
     "option": "slurm",
-    "sites_per_worker": 100,
+    "sites_per_worker": 20,
     "max_workers": 1,
     "sh_script": "sh ~/start_hsds.sh"
   },
