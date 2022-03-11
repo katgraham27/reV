@@ -232,9 +232,12 @@ def direct(ctx, gen_fpath, site_data, sam_files, nrwal_configs,
 
         if csv_output:
             nrwal_class = RevNrwalCSV
-            kwargs['fout'] = os.path.join(out_dir, '{}.csv'.format(name))
+            fout = '{}.csv'.format(name)
+            kwargs['fout'] = os.path.join(out_dir, fout)
         else:
             nrwal_class = RevNrwal
+            fout = os.path.basename(gen_fpath)
+            out_dir = os.path.dirname(gen_fpath)
 
         try:
             nrwal_class.run(*args, **kwargs)
@@ -245,12 +248,12 @@ def direct(ctx, gen_fpath, site_data, sam_files, nrwal_configs,
 
         runtime = (time.time() - t0) / 60
 
-        status = {'dirout': os.path.dirname(gen_fpath),
-                  'fout': os.path.basename(gen_fpath),
+        status = {'dirout': out_dir,
+                  'fout': fout,
                   'job_status': 'successful',
-                  'runtime': runtime, 'finput': gen_fpath}
-        Status.make_job_file(os.path.dirname(gen_fpath), ModuleName.NRWAL,
-                             name, status)
+                  'runtime': runtime,
+                  'finput': gen_fpath}
+        Status.make_job_file(out_dir, ModuleName.NRWAL, name, status)
 
 
 def get_node_cmd(name, gen_fpath, site_data, sam_files, nrwal_configs,
