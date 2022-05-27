@@ -1,0 +1,62 @@
+reV.config.hybrids\_config.HybridsConfig
+========================================
+
+.. currentmodule:: reV.config.hybrids_config
+
+.. autoclass:: HybridsConfig
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~HybridsConfig.check_files
+      ~HybridsConfig.check_overwrite_keys
+      ~HybridsConfig.clear
+      ~HybridsConfig.copy
+      ~HybridsConfig.fromkeys
+      ~HybridsConfig.get
+      ~HybridsConfig.get_file
+      ~HybridsConfig.items
+      ~HybridsConfig.keys
+      ~HybridsConfig.pop
+      ~HybridsConfig.popitem
+      ~HybridsConfig.resolve_path
+      ~HybridsConfig.set_self_dict
+      ~HybridsConfig.setdefault
+      ~HybridsConfig.str_replace_and_resolve
+      ~HybridsConfig.update
+      ~HybridsConfig.values
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~HybridsConfig.NAME
+      ~HybridsConfig.REQUIREMENTS
+      ~HybridsConfig.allow_solar_only
+      ~HybridsConfig.allow_wind_only
+      ~HybridsConfig.analysis_years
+      ~HybridsConfig.config_dir
+      ~HybridsConfig.config_keys
+      ~HybridsConfig.execution_control
+      ~HybridsConfig.fillna
+      ~HybridsConfig.limits
+      ~HybridsConfig.log_directory
+      ~HybridsConfig.log_level
+      ~HybridsConfig.name
+      ~HybridsConfig.ratio
+      ~HybridsConfig.ratio_bounds
+      ~HybridsConfig.solar_fpath
+      ~HybridsConfig.wind_fpath
+   
+   

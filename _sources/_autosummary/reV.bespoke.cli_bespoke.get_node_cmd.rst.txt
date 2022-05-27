@@ -1,0 +1,6 @@
+reV.bespoke.cli\_bespoke.get\_node\_cmd
+=======================================
+
+.. currentmodule:: reV.bespoke.cli_bespoke
+
+.. autofunction:: get_node_cmd

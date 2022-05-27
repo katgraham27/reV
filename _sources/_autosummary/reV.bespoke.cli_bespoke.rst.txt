@@ -1,0 +1,30 @@
+reV.bespoke.cli\_bespoke
+========================
+
+.. automodule:: reV.bespoke.cli_bespoke
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      get_node_cmd
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

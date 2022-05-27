@@ -1,0 +1,32 @@
+reV.bespoke.bespoke
+===================
+
+.. automodule:: reV.bespoke.bespoke
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      BespokeSinglePlant
+      BespokeWindPlants
+   
+   
+
+   
+   
+   
+
+
+

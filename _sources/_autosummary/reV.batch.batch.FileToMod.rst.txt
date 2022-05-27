@@ -1,0 +1,25 @@
+reV.batch.batch.FileToMod
+=========================
+
+.. currentmodule:: reV.batch.batch
+
+.. autoclass:: FileToMod
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~FileToMod.load
+      ~FileToMod.write
+   
+   
+
+   
+   
+   

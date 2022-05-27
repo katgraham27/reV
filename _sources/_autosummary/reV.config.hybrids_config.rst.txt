@@ -1,0 +1,31 @@
+reV.config.hybrids\_config
+==========================
+
+.. automodule:: reV.config.hybrids_config
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      HybridsConfig
+   
+   
+
+   
+   
+   
+
+
+

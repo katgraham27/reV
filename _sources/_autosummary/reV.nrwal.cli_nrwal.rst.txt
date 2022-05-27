@@ -1,0 +1,30 @@
+reV.nrwal.cli\_nrwal
+====================
+
+.. automodule:: reV.nrwal.cli_nrwal
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      get_node_cmd
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

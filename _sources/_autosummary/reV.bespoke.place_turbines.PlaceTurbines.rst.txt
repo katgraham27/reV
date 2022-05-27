@@ -1,0 +1,45 @@
+reV.bespoke.place\_turbines.PlaceTurbines
+=========================================
+
+.. currentmodule:: reV.bespoke.place_turbines
+
+.. autoclass:: PlaceTurbines
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PlaceTurbines.define_exclusions
+      ~PlaceTurbines.initialize_packing
+      ~PlaceTurbines.optimization_objective
+      ~PlaceTurbines.optimize
+      ~PlaceTurbines.place_turbines
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~PlaceTurbines.aep
+      ~PlaceTurbines.area
+      ~PlaceTurbines.capacity
+      ~PlaceTurbines.capacity_density
+      ~PlaceTurbines.capital_cost
+      ~PlaceTurbines.fixed_charge_rate
+      ~PlaceTurbines.fixed_operating_cost
+      ~PlaceTurbines.nturbs
+      ~PlaceTurbines.objective
+      ~PlaceTurbines.turbine_x
+      ~PlaceTurbines.turbine_y
+      ~PlaceTurbines.variable_operating_cost
+   
+   

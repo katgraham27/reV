@@ -1,0 +1,77 @@
+reV.config.bespoke.BespokeConfig
+================================
+
+.. currentmodule:: reV.config.bespoke
+
+.. autoclass:: BespokeConfig
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BespokeConfig.check_files
+      ~BespokeConfig.check_overwrite_keys
+      ~BespokeConfig.clear
+      ~BespokeConfig.copy
+      ~BespokeConfig.fromkeys
+      ~BespokeConfig.get
+      ~BespokeConfig.get_file
+      ~BespokeConfig.items
+      ~BespokeConfig.keys
+      ~BespokeConfig.pop
+      ~BespokeConfig.popitem
+      ~BespokeConfig.resolve_path
+      ~BespokeConfig.set_self_dict
+      ~BespokeConfig.setdefault
+      ~BespokeConfig.str_replace_and_resolve
+      ~BespokeConfig.update
+      ~BespokeConfig.values
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~BespokeConfig.NAME
+      ~BespokeConfig.REQUIREMENTS
+      ~BespokeConfig.analysis_years
+      ~BespokeConfig.area_filter_kernel
+      ~BespokeConfig.capital_cost_function
+      ~BespokeConfig.config_dir
+      ~BespokeConfig.config_keys
+      ~BespokeConfig.data_layers
+      ~BespokeConfig.excl_area
+      ~BespokeConfig.excl_dict
+      ~BespokeConfig.excl_fpath
+      ~BespokeConfig.execution_control
+      ~BespokeConfig.fixed_operating_cost_function
+      ~BespokeConfig.ga_kwargs
+      ~BespokeConfig.log_directory
+      ~BespokeConfig.log_level
+      ~BespokeConfig.min_area
+      ~BespokeConfig.min_spacing
+      ~BespokeConfig.name
+      ~BespokeConfig.objective_function
+      ~BespokeConfig.output_request
+      ~BespokeConfig.points_range
+      ~BespokeConfig.pre_extract_inclusions
+      ~BespokeConfig.project_points
+      ~BespokeConfig.res_fpath
+      ~BespokeConfig.resolution
+      ~BespokeConfig.sam_files
+      ~BespokeConfig.tm_dset
+      ~BespokeConfig.variable_operating_cost_function
+      ~BespokeConfig.wake_loss_multiplier
+      ~BespokeConfig.wd_bins
+      ~BespokeConfig.ws_bins
+   
+   

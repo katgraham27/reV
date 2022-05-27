@@ -1,0 +1,66 @@
+reV.SAM.generation.AbstractSamSolarThermal
+==========================================
+
+.. currentmodule:: reV.SAM.generation
+
+.. autoclass:: AbstractSamSolarThermal
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~AbstractSamSolarThermal.add_scheduled_losses
+      ~AbstractSamSolarThermal.agg_albedo
+      ~AbstractSamSolarThermal.annual_energy
+      ~AbstractSamSolarThermal.assign_inputs
+      ~AbstractSamSolarThermal.cf_mean
+      ~AbstractSamSolarThermal.cf_profile
+      ~AbstractSamSolarThermal.check_resource_data
+      ~AbstractSamSolarThermal.collect_outputs
+      ~AbstractSamSolarThermal.default
+      ~AbstractSamSolarThermal.drop_leap
+      ~AbstractSamSolarThermal.energy_yield
+      ~AbstractSamSolarThermal.ensure_res_len
+      ~AbstractSamSolarThermal.execute
+      ~AbstractSamSolarThermal.gen_profile
+      ~AbstractSamSolarThermal.get_sam_res
+      ~AbstractSamSolarThermal.get_time_interval
+      ~AbstractSamSolarThermal.make_datetime
+      ~AbstractSamSolarThermal.outputs_to_utc_arr
+      ~AbstractSamSolarThermal.reV_run
+      ~AbstractSamSolarThermal.run
+      ~AbstractSamSolarThermal.run_gen_and_econ
+      ~AbstractSamSolarThermal.set_resource_data
+      ~AbstractSamSolarThermal.tz_elev_check
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~AbstractSamSolarThermal.DIR
+      ~AbstractSamSolarThermal.IGNORE_ATTRS
+      ~AbstractSamSolarThermal.MODULE
+      ~AbstractSamSolarThermal.OUTAGE_CONFIG_KEY
+      ~AbstractSamSolarThermal.OUTAGE_SEED_CONFIG_KEY
+      ~AbstractSamSolarThermal.PYSAM_WEATHER_TAG
+      ~AbstractSamSolarThermal.RESOURCE_TYPES
+      ~AbstractSamSolarThermal.attr_dict
+      ~AbstractSamSolarThermal.has_timezone
+      ~AbstractSamSolarThermal.input_list
+      ~AbstractSamSolarThermal.meta
+      ~AbstractSamSolarThermal.module
+      ~AbstractSamSolarThermal.outage_seed
+      ~AbstractSamSolarThermal.pysam
+      ~AbstractSamSolarThermal.site
+   
+   

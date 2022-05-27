@@ -1,0 +1,6 @@
+reV.nrwal.cli\_nrwal.get\_node\_cmd
+===================================
+
+.. currentmodule:: reV.nrwal.cli_nrwal
+
+.. autofunction:: get_node_cmd

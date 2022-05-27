@@ -1,0 +1,62 @@
+reV.config.nrwal\_config.RevNrwalConfig
+=======================================
+
+.. currentmodule:: reV.config.nrwal_config
+
+.. autoclass:: RevNrwalConfig
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~RevNrwalConfig.check_files
+      ~RevNrwalConfig.check_overwrite_keys
+      ~RevNrwalConfig.clear
+      ~RevNrwalConfig.copy
+      ~RevNrwalConfig.fromkeys
+      ~RevNrwalConfig.get
+      ~RevNrwalConfig.get_file
+      ~RevNrwalConfig.items
+      ~RevNrwalConfig.keys
+      ~RevNrwalConfig.pop
+      ~RevNrwalConfig.popitem
+      ~RevNrwalConfig.resolve_path
+      ~RevNrwalConfig.set_self_dict
+      ~RevNrwalConfig.setdefault
+      ~RevNrwalConfig.str_replace_and_resolve
+      ~RevNrwalConfig.update
+      ~RevNrwalConfig.values
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~RevNrwalConfig.NAME
+      ~RevNrwalConfig.REQUIREMENTS
+      ~RevNrwalConfig.analysis_years
+      ~RevNrwalConfig.config_dir
+      ~RevNrwalConfig.config_keys
+      ~RevNrwalConfig.execution_control
+      ~RevNrwalConfig.gen_fpath
+      ~RevNrwalConfig.log_directory
+      ~RevNrwalConfig.log_level
+      ~RevNrwalConfig.meta_gid_col
+      ~RevNrwalConfig.name
+      ~RevNrwalConfig.nrwal_configs
+      ~RevNrwalConfig.output_request
+      ~RevNrwalConfig.sam_files
+      ~RevNrwalConfig.save_raw
+      ~RevNrwalConfig.site_data
+      ~RevNrwalConfig.site_meta_cols
+   
+   

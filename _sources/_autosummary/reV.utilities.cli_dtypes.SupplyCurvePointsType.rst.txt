@@ -1,0 +1,39 @@
+reV.utilities.cli\_dtypes.SupplyCurvePointsType
+===============================================
+
+.. currentmodule:: reV.utilities.cli_dtypes
+
+.. autoclass:: SupplyCurvePointsType
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SupplyCurvePointsType.convert
+      ~SupplyCurvePointsType.fail
+      ~SupplyCurvePointsType.get_metavar
+      ~SupplyCurvePointsType.get_missing_message
+      ~SupplyCurvePointsType.shell_complete
+      ~SupplyCurvePointsType.split_envvar_value
+      ~SupplyCurvePointsType.to_info_dict
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~SupplyCurvePointsType.arity
+      ~SupplyCurvePointsType.envvar_list_splitter
+      ~SupplyCurvePointsType.is_composite
+      ~SupplyCurvePointsType.name
+   
+   
