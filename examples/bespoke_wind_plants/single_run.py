@@ -52,9 +52,12 @@ SAM_CONFIGS = {'default': SAM_SYS_INPUTS}
 
 if __name__ == "__main__":
 
-    cost_function = """200 * system_capacity * np.exp(-system_capacity /
+    capital_cost_function = """200 * system_capacity * np.exp(-system_capacity /
         1E5 * 0.1 + (1 - 0.1))"""
-    objective_function = "cost / aep"
+    objective_function = "capital_cost / aep"
+
+    variable_operating_cost_function = "0.0"
+    fixed_operating_cost_function = "0.0"
 
     output_request = ('system_capacity', 'cf_mean', 'cf_profile')
     gid = 33
@@ -69,11 +72,14 @@ if __name__ == "__main__":
         TechMapping.run(excl_fp, RES.format(2012), dset=TM_DSET, max_workers=1)
         bsp = BespokeSinglePlant(gid, excl_fp, res_fp, TM_DSET,
                                  SAM_SYS_INPUTS,
-                                 objective_function, cost_function,
+                                 objective_function, capital_cost_function,
+                                 fixed_operating_cost_function,
+                                 variable_operating_cost_function,
                                  ga_kwargs={'max_time': 20},
                                  excl_dict=EXCL_DICT,
                                  output_request=output_request,
                                  )
+
         results = bsp.run_plant_optimization()
 
     # print(results)
@@ -86,7 +92,7 @@ if __name__ == "__main__":
     #       results["non_excluded_capacity_density"])
     print("bespoke_aep: ", results["bespoke_aep"])
     print("bespoke_objective: ", results["bespoke_objective"])
-    print("bespoke_annual_cost: ", results["bespoke_annual_cost"])
+    # print("bespoke_annual_cost: ", results["bespoke_annual_cost"])
 
     rotor_diameter = bsp.sam_sys_inputs["wind_turbine_rotor_diameter"]
 
