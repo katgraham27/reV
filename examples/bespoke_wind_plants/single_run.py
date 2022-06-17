@@ -55,12 +55,11 @@ if __name__ == "__main__":
     capital_cost_function = """200 * system_capacity * np.exp(-system_capacity /
         1E5 * 0.1 + (1 - 0.1))"""
     objective_function = "capital_cost / aep"
-
     variable_operating_cost_function = "0.0"
     fixed_operating_cost_function = "0.0"
 
     output_request = ('system_capacity', 'cf_mean', 'cf_profile')
-    gid = 33
+    gid = 35
     with tempfile.TemporaryDirectory() as td:
         excl_fp = os.path.join(td, 'ri_exclusions.h5')
         res_fp = os.path.join(td, 'ri_100_wtk_{}.h5')
@@ -93,6 +92,8 @@ if __name__ == "__main__":
     print("bespoke_aep: ", results["bespoke_aep"])
     print("bespoke_objective: ", results["bespoke_objective"])
     # print("bespoke_annual_cost: ", results["bespoke_annual_cost"])
+
+    print("solution history: ", bsp.plant_optimizer.solution_history)
 
     rotor_diameter = bsp.sam_sys_inputs["wind_turbine_rotor_diameter"]
 

@@ -98,6 +98,7 @@ class PlaceTurbines():
         self.packing_polygons = None
         self.optimized_design_variables = None
         self.safe_polygons = None
+        self.solution_history = None
 
         self.ILLEGAL = ('import ', 'os.', 'sys.', '.__', '__.', 'eval', 'exec')
         self._preflight(self.objective_function)
@@ -274,6 +275,7 @@ class PlaceTurbines():
         self.wind_plant["wind_farm_xCoordinates"] = self.turbine_x
         self.wind_plant["wind_farm_yCoordinates"] = self.turbine_y
         self.wind_plant["system_capacity"] = self.capacity
+        self.solution_history = ga.solution_history
 
     def place_turbines(self, **kwargs):
         """Define bespoke wind plant turbine layouts.
