@@ -20,7 +20,7 @@ class PlaceTurbines():
                  capital_cost_function,
                  fixed_operating_cost_function,
                  variable_operating_cost_function,
-                 include_mask, pixel_side_length, min_spacing,
+                 include_mask, pixel_side_length, min_spacing, wd_bins, ws_bins, wind_dist,
                  wake_loss_multiplier=1):
         """
         Parameters
@@ -86,6 +86,9 @@ class PlaceTurbines():
         self.pixel_side_length = pixel_side_length
         self.min_spacing = min_spacing
         self.wake_loss_multiplier = wake_loss_multiplier
+        self._wd_bins = wd_bins
+        self._ws_bins = ws_bins
+        self._wind_dist = wind_dist
 
         # internal variables
         self.nrows, self.ncols = np.shape(include_mask)
@@ -99,6 +102,10 @@ class PlaceTurbines():
         self.optimized_design_variables = None
         self.safe_polygons = None
         self.solution_history = None
+        self.ga_run_time = None
+        self.grid_history = None
+        self.turbx_history = None
+        self.turby_history = None
 
         self.ILLEGAL = ('import ', 'os.', 'sys.', '.__', '__.', 'eval', 'exec')
         self._preflight(self.objective_function)
@@ -119,6 +126,10 @@ class PlaceTurbines():
         self.safe_polygons that defines where turbines can be placed.
         """
         nx, ny = np.shape(self.include_mask)
+        # set whole grid to safe for testing: 
+        # for i in range(nx):
+        #     for j in range(ny):
+        #         self.include_mask[i][j] = 1
         self.safe_polygons = MultiPolygon()
         side_x = np.arange(nx + 1) * self.pixel_side_length
         side_y = np.arange(ny + 1, -1, -1) * self.pixel_side_length
@@ -164,7 +175,7 @@ class PlaceTurbines():
         define potential turbine locations that will be used as design
         variables in the gentic algorithm.
         """
-        packing = PackTurbines(self.min_spacing, self.packing_polygons)
+        packing = PackTurbines(self.min_spacing, self.packing_polygons, self._wd_bins, self._ws_bins, self._wind_dist)
         nturbs = 1E6
         mult = 1.0
         iters = 0
@@ -180,6 +191,9 @@ class PlaceTurbines():
             mult *= 1.1
         self.x_locations = packing.turbine_x
         self.y_locations = packing.turbine_y
+        self.grid_history = packing.grid_history
+        self.turbx_history = packing.turbx_history
+        self.turby_history = packing.turby_history
 
     # pylint: disable=W0641,W0123
     def optimization_objective(self, x):
@@ -276,6 +290,7 @@ class PlaceTurbines():
         self.wind_plant["wind_farm_yCoordinates"] = self.turbine_y
         self.wind_plant["system_capacity"] = self.capacity
         self.solution_history = ga.solution_history
+        self.ga_run_time = ga.run_time
 
     def place_turbines(self, **kwargs):
         """Define bespoke wind plant turbine layouts.

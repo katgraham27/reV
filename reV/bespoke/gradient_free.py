@@ -95,6 +95,7 @@ class GeneticAlgorithm():
         self.solution_history = np.array([])
         self.optimized_function_value = 0.0
         self.optimized_design_variables = np.array([])
+        self.run_time = 0.0
 
         self.initialize_design_variables()
         self.initialize_bits()
@@ -216,10 +217,10 @@ class GeneticAlgorithm():
         self.solution_history = np.zeros(self.max_generation + 1)
         self.solution_history[0] = np.min(self.parent_fitness)
 
-        run_time = 0.0
+        #run_time = 0.0
         start_time = time.time()
         while converged is False and ngens < self.max_generation and \
-                run_time < self.max_time:
+                self.run_time < self.max_time:
             self.crossover()
             self.mutate()
             # determine fitness of offspring
@@ -261,7 +262,7 @@ class GeneticAlgorithm():
             generation += 1
             ngens += 1
 
-            run_time = time.time() - start_time
+            self.run_time = time.time() - start_time
 
         # Assign final outputs
         self.solution_history = self.solution_history[0:ngens]
@@ -273,7 +274,7 @@ class GeneticAlgorithm():
         logger.debug('The GA ran for this many generations:\n{}'
                      .format(ngens))
         logger.debug('The GA ran for this many seconds:\n{}'
-                     .format(run_time))
+                     .format(self.run_time))
         logger.debug('The optimized function value was:\n{}'
                      .format(self.optimized_function_value))
         logger.debug('The optimal design variables were:\n{}'

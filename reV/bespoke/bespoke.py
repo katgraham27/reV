@@ -601,7 +601,11 @@ class BespokeSinglePlant:
                 self.include_mask,
                 self.pixel_side_length,
                 self.min_spacing,
-                self.wake_loss_multiplier)
+                self._wd_bins,
+                self._ws_bins,
+                self._wind_dist,
+                self.wake_loss_multiplier
+                )
 
         return self._plant_optm
 
