@@ -4,7 +4,7 @@ turbine packing module.
 """
 from re import X
 import numpy as np
-from shapely.geometry import Polygon, MultiPolygon, Point, LineString
+from shapely.geometry import Polygon, MultiPolygon, Point, LineString, MultiLineString, MultiPoint
 import shapely.geometry
 from reV.bespoke.plotting_functions import get_xy
 from reV.utilities.exceptions import WhileLoopPackingError
@@ -61,16 +61,19 @@ class PackTurbines():
                         self._ws_bins[2])
         wind_frequencies = self._wind_dist
         sample_sizes = np.sum(wind_frequencies, axis = 0)
+        #print("Wind freqs : ", wind_frequencies)
+        #print("sample_sizes: ", sample_sizes)
         dominant_wind_direction = wind_directions[np.argmax(sample_sizes)]
         #mean_wind_direction = np.radians(np.sum(wind_directions*sample_sizes)/np.sum(sample_sizes))
         # Convert angle to unit circle (0 degrees is in the east direction and angles go counterclockwise
+        #print("dominant wind direction (north is 0 degrees, clockwise): ", dominant_wind_direction)
         while (dominant_wind_direction > 360): 
             dominant_wind_direction = dominant_wind_direction - 360
             #print("theta: ", theta) 
-            dominant_wind_direction = 360 - dominant_wind_direction + 90
-            #print ("new theta: ", theta)      
+        dominant_wind_direction = 360 - dominant_wind_direction + 90
+        #print ("new theta: ", theta)      
         self.ang = np.radians(dominant_wind_direction)
-        print(np.degrees(self.ang))
+        #print("dominant wind direction (unit circle): ", np.degrees(self.ang))
 
     # def dom_wind_dir(self):
     #     """Find the dominant wind direction
@@ -169,21 +172,38 @@ class PackTurbines():
         return return_x, return_y
 
     def is_feas_point(self, point, poly):
+        # SECOND VERSION BLAHBLAHBLAHBLAHBLAHBLAH
         bool = False
         if (poly == None):
             poly = self.leftover
-        if poly.geom_type == 'MultiPolygon':
+        if (poly.geom_type == 'MultiPolygon' or poly.geom_type == 'MultiLineString'):
             for k in range (len(poly)):
                         if (poly[k].contains(point)):
                             bool = True
             
-        elif poly.geom_type == 'Polygon':
+        else:
             if (poly.contains(point)):
                 bool = True
-        else:
-            print("leftover type: ", type(self.leftover))
-            # raise IOError('Shape is not a polygon.')
+            #print("leftover type: ", type(self.leftover))
         return bool
+
+
+        # # FIRST VERSION BLAHBLAHBLAHBLAHBLAHBLAH
+        # bool = False
+        # if (poly == None):
+        #     poly = self.leftover
+        # if poly.geom_type == 'MultiPolygon':
+        #     for k in range (len(poly)):
+        #                 if (poly[k].contains(point)):
+        #                     bool = True
+            
+        # elif poly.geom_type == 'Polygon':
+        #     if (poly.contains(point)):
+        #         bool = True
+        # else:
+        #     print("leftover type: ", type(self.leftover))
+        #     # raise IOError('Shape is not a polygon.')
+        # return bool
 
     def recurse_grid(self, pointx, pointy):
         theta = self.ang - np.pi/6
@@ -223,7 +243,7 @@ class PackTurbines():
             # -----------------------------------------------------------------
             # PJ'S GRID -------------------------------------------------------
             # -----------------------------------------------------------------
-            if(True):
+            if(False):
                 #Get all polygons in the safe_polygon MultiPolygon, and save bounds
                 allpolys = list(self.leftover)
                 cell_width = self.min_spacing
@@ -270,9 +290,9 @@ class PackTurbines():
                             self.leftover = self.leftover.difference(new_turbine)
                             if isinstance(self.leftover, Polygon):
                                 self.leftover = MultiPolygon([self.leftover])
-                            self.grid_history.append(self.leftover)
-                            self.turbx_history.append(self.turbine_x)
-                            self.turby_history.append(self.turbine_y)
+                            # self.grid_history.append(self.leftover)
+                            # self.turbx_history.append(self.turbine_x)
+                            # self.turby_history.append(self.turbine_y)
                 # KAT KAT KAT KAT KAT KAT KAT. THE FOLLWOING PRINT STATEMENT IS IMPORTANT!!!
                 # print("number of turbines grid-packed: ", len(self.turbine_x))
                 # Fill in the rest of the space
@@ -288,9 +308,13 @@ class PackTurbines():
                         nareas = len(self.leftover.geoms)
                         areas = np.zeros(len(self.leftover.geoms))
                         points = 0
-                        for i in range(nareas):
-                            areas[i] = self.leftover.geoms[i].area
-                            points += len(self.leftover.geoms[i].exterior.coords[:])
+                        # for i in range(nareas):
+                        #     areas[i] = self.leftover.geoms[i].area
+                        #     if (areas[i] != 0):
+                        #         points += len(self.leftover.geoms[i].exterior.coords[:])
+                        #     else:
+                        #         points += len(self.leftover.geoms[i].coords[:])
+                        #         print("hi")
 
                         m = min(i for i in areas if i > 0)
                         ind = np.where(areas == m)[0][0]
@@ -315,15 +339,15 @@ class PackTurbines():
                     self.leftover = self.leftover.difference(new_turbine)
                     if isinstance(self.leftover, Polygon):
                         self.leftover = MultiPolygon([self.leftover])
-                    self.grid_history.append(self.leftover)
-                    self.turbx_history.append(self.turbine_x)
-                    self.turby_history.append(self.turbine_y)
+                    # self.grid_history.append(self.leftover)
+                    # self.turbx_history.append(self.turbine_x)
+                    # self.turby_history.append(self.turbine_y)
 
 
             # -----------------------------------------------------------------
             # RECURSIVE GRID --------------------------------------------------
             # -----------------------------------------------------------------
-            if (False):
+            if (True):
                 if self.leftover.area > 0:
                     can_add_more = True
                 else:
@@ -347,7 +371,10 @@ class PackTurbines():
                         #     plt.show()
                         for i in range(nareas):
                             areas[i] = self.leftover.geoms[i].area
-                            points += len(self.leftover.geoms[i].exterior.coords[:])
+                        #     if self.leftover.geoms[i].geom_type == Polygon: 
+                        #         points += len(self.leftover.geoms[i].exterior.coords[:])
+                        #     else:
+                        #         points += len(self.leftover.geoms[i].coords[:])
                         # print the total number of exterior points in the polygon
                         #print(points)
                         m = min(i for i in areas if i > 0)
@@ -373,11 +400,19 @@ class PackTurbines():
                         # KAT KAT KAT KAT KAT KAT KAT. THE FOLLWOING PRINT STATEMENT WAS LEFT IN!!!
                         # if (not type(self.leftover) == MultiPolygon and not type(self.leftover) == Polygon):
                         #     print("leftova type: ", type(self.leftover))
-                        self.grid_history.append(self.leftover)
-                        self.turbx_history.append(self.turbine_x)
-                        self.turby_history.append(self.turbine_y) 
+                        # self.grid_history.append(self.leftover)
+                        # self.turbx_history.append(self.turbine_x)
+                        # self.turby_history.append(self.turbine_y) 
                         
                         self.recurse_grid(pointx = x[index], pointy = y[index])
+                    # else: 
+                    #     if isinstance(self.leftover, MultiLineString) or isinstance(self.leftover, MultiPoint):
+                            
+                    
+                    # elif len(self.leftover.geoms)>0:
+                    #     ngeoms = len(self.leftover.geoms)
+                    #     for i in range(ngeoms):
+
                     else: 
                         # KAT KAT KAT KAT KAT KAT KAT. THE FOLLWOING PRINT STATEMENTS WERE LEFT IN!!!
                         # print("self.turbsgrid: ", self.turbsgrid)
@@ -427,9 +462,9 @@ class PackTurbines():
                     self.leftover = self.leftover.difference(new_turbine)
                     if isinstance(self.leftover, Polygon):
                         self.leftover = MultiPolygon([self.leftover])
-                    self.grid_history.append(self.leftover)
-                    self.turbx_history.append(self.turbine_x)
-                    self.turby_history.append(self.turbine_y)
+                    # self.grid_history.append(self.leftover)
+                    # self.turbx_history.append(self.turbine_x)
+                    # self.turby_history.append(self.turbine_y)
 
 
 
