@@ -431,6 +431,7 @@ class BespokeSinglePlant:
                  'gid_counts': gid_counts,
                  'n_gids': self.sc_point.n_gids,
                  'area_sq_km': self.sc_point.area,
+                #  'TEST_OUTPUT2': self.sc_point.include_mask,
                  }, index=[self.sc_point.gid])
 
         return self._meta
@@ -525,7 +526,7 @@ class BespokeSinglePlant:
                                       bins=(ws_bins, wd_bins))
             self._wind_dist, self._ws_edges, self._wd_edges = hist_out
             self._wind_dist /= self._wind_dist.sum()
-
+            
         return self._wind_dist, self._ws_edges, self._wd_edges
 
     def initialize_wind_plant_ts(self):
@@ -841,6 +842,8 @@ class BespokeSinglePlant:
             self.plant_optimizer.variable_operating_cost
         self._outputs["included_area_capacity_density"] = \
             self.plant_optimizer.capacity_density
+        self._outputs["TESTOUTPUT"] = \
+            self.include_mask
 
         logger.debug('Plant layout optimization complete!')
 

@@ -127,9 +127,9 @@ class PlaceTurbines():
         """
         nx, ny = np.shape(self.include_mask)
         # set whole grid to safe for testing: 
-        # for i in range(nx):
-        #     for j in range(ny):
-        #         self.include_mask[i][j] = 1
+        for i in range(nx):
+            for j in range(ny):
+                self.include_mask[i][j] = 1
         self.safe_polygons = MultiPolygon()
         side_x = np.arange(nx + 1) * self.pixel_side_length
         side_y = np.arange(ny + 1, -1, -1) * self.pixel_side_length

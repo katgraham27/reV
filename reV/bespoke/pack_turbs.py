@@ -31,6 +31,7 @@ class PackTurbines():
 
         self.min_spacing = min_spacing
         self.safe_polygons = safe_polygons
+        # print(self.safe_polygons.area())
         self.weight_x = weight_x
         # self.orig = orig
         # self.grid = grid
@@ -72,7 +73,8 @@ class PackTurbines():
             #print("theta: ", theta) 
         dominant_wind_direction = 360 - dominant_wind_direction + 90
         #print ("new theta: ", theta)      
-        self.ang = np.radians(dominant_wind_direction)
+        # self.ang = np.radians(dominant_wind_direction) + np.radians(15)
+        self.ang = 0
         #print("dominant wind direction (unit circle): ", np.degrees(self.ang))
 
     # def dom_wind_dir(self):
@@ -308,8 +310,8 @@ class PackTurbines():
                         nareas = len(self.leftover.geoms)
                         areas = np.zeros(len(self.leftover.geoms))
                         points = 0
-                        # for i in range(nareas):
-                        #     areas[i] = self.leftover.geoms[i].area
+                        for i in range(nareas):
+                            areas[i] = self.leftover.geoms[i].area
                         #     if (areas[i] != 0):
                         #         points += len(self.leftover.geoms[i].exterior.coords[:])
                         #     else:
@@ -347,7 +349,7 @@ class PackTurbines():
             # -----------------------------------------------------------------
             # RECURSIVE GRID --------------------------------------------------
             # -----------------------------------------------------------------
-            if (True):
+            if (False):
                 if self.leftover.area > 0:
                     can_add_more = True
                 else:
@@ -425,7 +427,7 @@ class PackTurbines():
             # -----------------------------------------------------------------
             # ORIGINAL --------------------------------------------------------
             # -----------------------------------------------------------------
-            if (False):
+            if (True):
                 while can_add_more:                                    
                     iters += 1 
                     if iters > 10000:
@@ -458,13 +460,14 @@ class PackTurbines():
                                             ).buffer(self.min_spacing, resolution=200)                      
 
                     else:
+                        print("iters: ", iters)
                         break
                     self.leftover = self.leftover.difference(new_turbine)
                     if isinstance(self.leftover, Polygon):
                         self.leftover = MultiPolygon([self.leftover])
-                    # self.grid_history.append(self.leftover)
-                    # self.turbx_history.append(self.turbine_x)
-                    # self.turby_history.append(self.turbine_y)
+                    self.grid_history.append(self.leftover)
+                    self.turbx_history.append(self.turbine_x)
+                    self.turby_history.append(self.turbine_y)
 
 
 
